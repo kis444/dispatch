@@ -1,6 +1,8 @@
+// lib/store.ts
 export interface User {
   id: string
   email: string
+  role: 'dispatcher' | 'owner'  // Adăugat rol
   commissionRate: number
   cutPercentage: number
   taxPercentage: number
@@ -40,6 +42,7 @@ export interface AfterHours {
 }
 
 export const defaultUserSettings: Omit<User, 'id' | 'email'> = {
+  role: 'dispatcher',  // Adăugat rol cu valoare default
   commissionRate: 1.3,
   cutPercentage: 4,
   taxPercentage: 7,
@@ -100,6 +103,29 @@ export function updateUserSettings(userId: string, settings: Partial<User>): voi
     localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(users))
     setAuthUser(userEntry.user)
   }
+}
+
+// Funcție pentru a seta primul utilizator ca owner
+export function setupFirstOwner(email: string, password: string): User | null {
+  const users = getUsers()
+  if (Object.keys(users).length === 0) {
+    // Primul utilizator devine owner
+    const newUser: User = {
+      id: generateId(),
+      email,
+      role: 'owner',
+      commissionRate: 1.3,
+      cutPercentage: 4,
+      taxPercentage: 7,
+      monthlyGoal: 4000,
+      defaultAfterHoursValue: 100,
+      averageLoadValue: 1500,
+    }
+    saveUser(email, password, newUser)
+    setAuthUser(newUser)
+    return newUser
+  }
+  return null
 }
 
 // Drivers

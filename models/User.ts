@@ -1,3 +1,4 @@
+// models/User.ts
 import mongoose from "mongoose"
 
 const UserSchema = new mongoose.Schema({
@@ -6,6 +7,7 @@ const UserSchema = new mongoose.Schema({
 
   role: {
     type: String,
+    enum: ["dispatcher", "owner"],  // Adaugă enum pentru validare
     default: "dispatcher"
   },
 
